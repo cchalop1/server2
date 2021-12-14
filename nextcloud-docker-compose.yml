@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  nextcloud-db:
+    image: postgres
+    restart: always
+    volumes:
+      - /home/debian/nextcloud-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    hostname: nextcloud
+    restart: always
+    links:
+      - nextcloud-db
+    volumes:
+      - "/home/debian/nextcloud/:/var/www/html"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nextcloud.rule=Host(`nextcloud.$MY_DOMAIN`)"
+      - "traefik.http.routers.nextcloud.entrypoints=websecure"
+      - "traefik.http.routers.nextcloud.tls.certresolver=lets-encr"
+    environment:
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_HOST=nextcloud-db
+
+networks:
+  default:
+    name: $DEFAULT_NETWORK

@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    hostname: portainer
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /home/debian/portainer_data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.$MY_DOMAIN`)"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
+      - "traefik.http.routers.portainer.tls.certresolver=lets-encr"
+
+networks:
+  default:
+    name: $DEFAULT_NETWORK
+
+volumes:
+  portainer_data: null

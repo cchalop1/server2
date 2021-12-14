@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  bitwarden:
+    image: "bitwardenrs/server:latest"
+    container_name: bitwarden
+    hostname: bitwarden
+    restart: always
+    volumes:
+      - "/home/debian/bw-data/:/data/"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bitwarden.rule=Host(`bw.$MY_DOMAIN`)"
+      - "traefik.http.routers.bitwarden.entrypoints=websecure"
+      - "traefik.http.routers.bitwarden.tls.certresolver=lets-encr"
+
+networks:
+  default:
+    name: $DEFAULT_NETWORK

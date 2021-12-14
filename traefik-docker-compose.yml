@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  traefik:
+    image: "traefik:v2.1"
+    container_name: "traefik"
+    hostname: "traefik"
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik_conf/traefik.yml:/traefik.yml:ro"
+      - "./traefik_conf/acme.json:/acme.json"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.$MY_DOMAIN`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls.certresolver=lets-encr"
+      - "traefik.http.middlewares.test-auth.basicauth.users=$PASSWORD_TRARFIK"
+
+networks:
+  default:
+    name: $DEFAULT_NETWORK
