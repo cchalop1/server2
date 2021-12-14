@@ -15,6 +15,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./traefik_conf/traefik.yml:/traefik.yml:ro"
       - "./traefik_conf/acme.json:/acme.json"
+      - "./users_credentials:/users_credentials:ro"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.$MY_DOMAIN`)"
@@ -22,6 +23,13 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=lets-encr"
       - "traefik.http.middlewares.test-auth.basicauth.users=$PASSWORD_TRARFIK"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.redirect-https.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.redirect-https.entrypoints=web"
+      - "traefik.http.routers.redirect-https.middlewares=redirect-to-https"
+      - "traefik.http.routers.traefik.middlewares=auth-middleware"
+      - "traefik.http.middlewares.auth-middleware.basicauth.usersfile=/users_credentials"
+
 
 networks:
   default:
