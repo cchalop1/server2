@@ -7,7 +7,7 @@ services:
     hostname: bitwarden
     restart: always
     volumes:
-      - "/home/debian/bw-data/:/data/"
+      - "$HOME/bw-data/:/data/"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.bitwarden.rule=Host(`bw.$MY_DOMAIN`)"

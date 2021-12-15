@@ -19,7 +19,7 @@ services:
     links:
       - nextcloud-db
     volumes:
-      - "/home/debian/nextcloud/:/var/www/html"
+      - "$HOME/nextcloud/:/var/www/html"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.nextcloud.rule=Host(`nextcloud.$MY_DOMAIN`)"
